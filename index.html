@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#100c18" />
+  <title>SeiDuko | Sudoku</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="SeiDuko home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span>SeiDuko<span class="brand-dot">.</span></span>
+      </a>
+      <div class="topbar-note"><span class="live-dot"></span> Daily play, endless puzzles</div>
+    </header>
+
+    <section class="start-screen" id="startMenu" aria-label="SeiDuko start menu">
+      <div class="start-copy">
+        <p class="eyebrow">A quieter kind of challenge</p>
+        <h1>Welcome to <em>SeiDuko.</em></h1>
+        <p class="intro-copy">Fresh grids, clean thinking, and a leaderboard that rewards every second.</p>
+      </div>
+      <div class="start-menu">
+        <label class="name-label" for="playerName">Your name</label>
+        <input class="name-input" id="playerName" name="playerName" type="text" maxlength="18" autocomplete="nickname" placeholder="Enter a name" required />
+        <p class="start-error" id="startError" aria-live="polite"></p>
+        <p class="menu-label">Choose your difficulty</p>
+        <div class="start-difficulties" role="radiogroup" aria-label="Choose starting difficulty">
+          <button class="start-difficulty selected" data-start-difficulty="easy" role="radio" aria-checked="true"><strong>Easy</strong><span>42 clues</span><i>01</i></button>
+          <button class="start-difficulty" data-start-difficulty="medium" role="radio" aria-checked="false"><strong>Medium</strong><span>34 clues</span><i>02</i></button>
+          <button class="start-difficulty" data-start-difficulty="hard" role="radio" aria-checked="false"><strong>Hard</strong><span>27 clues</span><i>03</i></button>
+        </div>
+        <button class="start-button" id="startGame">Start game <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="start-lower">
+        <div class="score-stamp" aria-label="Current best score">
+          <span class="stamp-label">YOUR BEST</span>
+          <strong id="bestTime">--:--</strong>
+          <span id="bestDifficulty">Play a round</span>
+        </div>
+        <section class="start-leaderboard" aria-label="Leaderboard preview">
+          <div class="section-heading"><span class="section-number">01</span><h2>Leaderboards</h2></div>
+          <p>Fastest times, sorted by difficulty.</p>
+          <div class="leaderboard-tabs start-leaderboard-tabs" role="tablist" aria-label="Start menu leaderboard difficulty">
+            <button class="leaderboard-tab active" data-leaderboard="easy">Easy</button>
+            <button class="leaderboard-tab" data-leaderboard="medium">Medium</button>
+            <button class="leaderboard-tab" data-leaderboard="hard">Hard</button>
+          </div>
+          <div class="leaderboard-list" id="startLeaderboardList"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="game-layout hidden" id="gameScreen" aria-label="Sudoku game">
+      <div class="game-panel">
+        <div class="game-toolbar">
+          <div class="difficulty-tabs" role="tablist" aria-label="Choose difficulty">
+            <button class="difficulty-tab active" data-difficulty="easy" role="tab" aria-selected="true">Easy<span>42 clues</span></button>
+            <button class="difficulty-tab" data-difficulty="medium" role="tab" aria-selected="false">Medium<span>34 clues</span></button>
+            <button class="difficulty-tab" data-difficulty="hard" role="tab" aria-selected="false">Hard<span>27 clues</span></button>
+          </div>
+          <div class="timer-wrap" aria-live="polite">
+            <span class="timer-label">TIME</span>
+            <span class="timer" id="timer">00:00</span>
+          </div>
+        </div>
+
+        <div class="board-wrap">
+          <div class="sudoku-board" id="board" role="grid" aria-label="Sudoku puzzle"></div>
+          <div class="board-message" id="boardMessage" aria-live="polite"></div>
+        </div>
+
+        <div class="number-pad" aria-label="Number pad">
+          <button class="number-button erase" data-number="0" aria-label="Erase entry">x</button>
+          <button class="number-button" data-number="1">1</button>
+          <button class="number-button" data-number="2">2</button>
+          <button class="number-button" data-number="3">3</button>
+          <button class="number-button" data-number="4">4</button>
+          <button class="number-button" data-number="5">5</button>
+          <button class="number-button" data-number="6">6</button>
+          <button class="number-button" data-number="7">7</button>
+          <button class="number-button" data-number="8">8</button>
+          <button class="number-button" data-number="9">9</button>
+        </div>
+
+        <div class="game-actions">
+          <button class="text-button" id="backToMenu"><span aria-hidden="true">←</span> Menu</button>
+          <button class="text-button" id="newGame"><span aria-hidden="true">↻</span> New puzzle</button>
+          <button class="primary-button" id="checkPuzzle">Check puzzle <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <aside class="sidebar">
+        <section class="side-section how-to">
+          <div class="section-heading"><span class="section-number">01</span><h2>How to play</h2></div>
+          <p>Fill every row, column, and 3 × 3 box with the numbers 1–9. Each number can appear only once in each line.</p>
+          <div class="keyboard-hint"><kbd>1</kbd><kbd>—</kbd><kbd>9</kbd><span>or use your keyboard</span></div>
+        </section>
+
+        <section class="side-section leaderboard-section">
+          <div class="section-heading"><span class="section-number">02</span><h2>Leaderboard</h2></div>
+          <div class="leaderboard-tabs game-leaderboard-tabs" role="tablist" aria-label="Leaderboard difficulty">
+            <button class="leaderboard-tab active" data-leaderboard="easy">Easy</button>
+            <button class="leaderboard-tab" data-leaderboard="medium">Medium</button>
+            <button class="leaderboard-tab" data-leaderboard="hard">Hard</button>
+          </div>
+          <div class="leaderboard-list" id="leaderboardList"></div>
+          <p class="leaderboard-note">Your best times are saved on this device.</p>
+        </section>
+      </aside>
+    </section>
+
+    <footer><span>SEIDUKO / 2026</span><span>Take your time. Then take less.</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
