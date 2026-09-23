@@ -47,12 +47,18 @@ h1 em { color: var(--purple); font-style: normal; }
 .start-error { color: #f18bcb; font-size: 11px; min-height: 16px; margin: 8px 0 0; }
 .menu-label { color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .1em; margin: 0 0 14px; text-transform: uppercase; }
 .start-difficulties { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
+.start-modes { display: grid; gap: 8px; grid-template-columns: repeat(3, 1fr); }
 .start-difficulty { background: rgba(24, 18, 32, .78); border: 1px solid var(--line); color: var(--muted); cursor: pointer; min-height: 92px; padding: 16px; position: relative; text-align: left; transition: border .15s, background .15s, color .15s; }
+.start-mode { background: rgba(24, 18, 32, .78); border: 1px solid var(--line); color: var(--muted); cursor: pointer; min-height: 70px; padding: 13px 16px; text-align: left; transition: border .15s, background .15s, color .15s; }
 .start-difficulty strong, .start-difficulty span { display: block; }
+.start-mode strong, .start-mode span { display: block; }
 .start-difficulty strong { color: var(--ink); font-size: 15px; }
+.start-mode strong { color: var(--ink); font-size: 13px; }
 .start-difficulty span { font-family: var(--mono); font-size: 9px; margin-top: 9px; }
+.start-mode span { font-family: var(--mono); font-size: 9px; margin-top: 8px; }
 .start-difficulty i { bottom: 12px; color: var(--purple); font-family: var(--mono); font-size: 9px; font-style: normal; position: absolute; right: 13px; }
-.start-difficulty:hover, .start-difficulty.selected { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+.mode-label { margin-top: 22px; }
+.start-difficulty:hover, .start-difficulty.selected, .start-mode:hover, .start-mode.selected { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
 .start-button { background: var(--purple); border: 0; color: var(--black); cursor: pointer; font-size: 13px; font-weight: 700; margin-top: 15px; padding: 15px 19px; transition: background .15s, transform .15s; }
 .start-button:hover { background: #c386fa; transform: translateY(-2px); }
 .start-button span { font-size: 17px; margin-left: 25px; }
@@ -63,8 +69,11 @@ h1 em { color: var(--purple); font-style: normal; }
 .game-layout { align-items: start; display: grid; gap: 70px; grid-template-columns: minmax(420px, 650px) 1fr; padding-top: 65px; }
 .game-panel { min-width: 0; }
 .game-toolbar { align-items: start; display: flex; justify-content: space-between; margin-bottom: 22px; }
+.game-settings { display: grid; gap: 17px; }
 .difficulty-tabs { display: flex; gap: 28px; }
+.game-modes { display: flex; gap: 18px; }
 .difficulty-tab, .leaderboard-tab { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 0; text-align: left; }
+.game-mode-tab { background: none; border: 0; color: var(--muted); cursor: pointer; font-family: var(--mono); font-size: 9px; letter-spacing: .05em; padding: 0; text-transform: uppercase; }
 .difficulty-tab { font-size: 14px; font-weight: 600; }
 .difficulty-tab span { display: block; font-family: var(--mono); font-size: 9px; font-weight: 400; letter-spacing: .04em; margin-top: 7px; }
 .difficulty-tab.active { color: var(--purple); }
@@ -72,6 +81,10 @@ h1 em { color: var(--purple); font-style: normal; }
 .timer-wrap { text-align: right; }
 .timer-label { color: var(--muted); display: block; font-family: var(--mono); font-size: 9px; letter-spacing: .12em; margin-bottom: 5px; }
 .timer { color: var(--purple); font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: .04em; }
+.status-wrap { display: flex; gap: 26px; }
+.lives-wrap { text-align: right; }
+.lives { color: var(--purple); font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: .04em; }
+.game-mode-tab.active { color: var(--purple); }
 .board-wrap { position: relative; }
 .sudoku-board { aspect-ratio: 1; background: var(--purple); border: 2px solid var(--purple); display: grid; grid-template-columns: repeat(9, 1fr); max-width: 650px; width: 100%; }
 .cell { align-items: center; background: var(--white); border-bottom: 1px solid var(--line); border-right: 1px solid var(--line); color: var(--ink); cursor: pointer; display: flex; font-family: var(--mono); font-size: clamp(18px, 3vw, 27px); justify-content: center; position: relative; transition: background .15s ease; }
@@ -111,6 +124,7 @@ h2 { font-size: 16px; margin: 0; }
 kbd { align-items: center; border: 1px solid var(--line); color: var(--purple); display: inline-flex; font-family: var(--mono); font-size: 10px; height: 22px; justify-content: center; min-width: 22px; }
 .keyboard-hint span { margin-left: 7px; }
 .leaderboard-tabs { border-bottom: 1px solid var(--soft-line); display: flex; gap: 18px; margin: 0 0 5px; }
+.leaderboard-mode-tabs { margin-top: 14px; }
 .leaderboard-tab { font-family: var(--mono); font-size: 9px; letter-spacing: .05em; padding: 0 0 10px; position: relative; text-transform: uppercase; }
 .leaderboard-tab.active { color: var(--purple); }
 .leaderboard-tab.active::after { background: var(--purple); bottom: -1px; content: ""; height: 2px; left: 0; position: absolute; right: 0; }
@@ -150,10 +164,11 @@ footer { align-items: center; border-top: 1px solid var(--line); color: var(--mu
   .score-stamp { margin: 0 0 38px 5px; }
   .start-leaderboard { border-left: 0; border-top: 1px solid var(--line); padding: 30px 0 0; }
   .game-toolbar { display: block; }
-  .difficulty-tabs { gap: 0; justify-content: space-between; width: 100%; }
+  .difficulty-tabs, .game-modes { gap: 0; justify-content: space-between; width: 100%; }
   .difficulty-tab { font-size: 12px; }
   .difficulty-tab span { font-size: 8px; }
-  .timer-wrap { align-items: baseline; border-top: 1px solid var(--soft-line); display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; text-align: left; }
+  .status-wrap { border-top: 1px solid var(--soft-line); justify-content: space-between; margin-top: 16px; padding-top: 12px; }
+  .timer-wrap, .lives-wrap { align-items: baseline; display: flex; justify-content: space-between; text-align: left; }
   .timer-label { margin-bottom: 0; }
   .timer { font-size: 23px; line-height: 1; }
   .number-pad { gap: 5px; grid-template-columns: repeat(5, 1fr); margin-top: 14px; }

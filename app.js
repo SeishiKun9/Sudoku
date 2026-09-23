@@ -1,5 +1,10 @@
 const DIFFICULTIES = { easy: 39, medium: 47, hard: 54 };
-const LEADERBOARD_KEY = "seiduko-leaderboard-v2";
+const GAME_MODES = {
+  hardcore: { label: "Hardcore", lives: 1 },
+  standard: { label: "Standard", lives: 3 },
+  baby: { label: "Baby", lives: Infinity }
+};
+const LEADERBOARD_KEY = "seiduko-leaderboard-v3";
 const NAMES = ["You", "Aster", "Mika", "Rowan", "June"];
 
 const state = {
@@ -13,7 +18,11 @@ const state = {
   running: false,
   completed: false,
   leaderboardDifficulty: "easy",
+  leaderboardMode: "standard",
   startDifficulty: "easy",
+  startMode: "standard",
+  mode: "standard",
+  lives: 3,
   playerName: "",
   givens: new Set(),
   locked: new Set(),
@@ -22,6 +31,7 @@ const state = {
 
 const boardElement = document.querySelector("#board");
 const timerElement = document.querySelector("#timer");
+const livesElement = document.querySelector("#lives");
 const messageElement = document.querySelector("#boardMessage");
 const leaderboardElement = document.querySelector("#leaderboardList");
 const startLeaderboardElement = document.querySelector("#startLeaderboardList");
@@ -74,6 +84,24 @@ function startTimer() {
       timerElement.textContent = formatTime(state.seconds);
     }
   }, 1000);
+}
+
+function updateLives() {
+  const lives = state.lives === Infinity ? "INF" : state.lives;
+  livesElement.textContent = lives;
+  livesElement.setAttribute("aria-label", state.lives === Infinity ? "Unlimited lives" : `${state.lives} lives remaining`);
+}
+
+function loseLife() {
+  if (state.lives === Infinity) return true;
+  state.lives -= 1;
+  updateLives();
+  if (state.lives > 0) return true;
+  state.completed = true;
+  clearInterval(state.timerId);
+  messageElement.className = "board-message error";
+  messageElement.textContent = "Out of lives. Start a new puzzle to try again.";
+  return false;
 }
 
 function renderBoard() {
@@ -146,6 +174,11 @@ function enterNumber(number) {
     cell.classList.add("correct");
   } else if (number) {
     cell.classList.add("conflict");
+    if (!loseLife()) {
+      highlightCells();
+      updateNumberPad();
+      return;
+    }
   }
   cell.textContent = number || "";
   cell.setAttribute("aria-label", `Row ${row + 1}, column ${column + 1}${number ? `, ${number}` : ", empty"}`);
@@ -182,7 +215,7 @@ function finishGame() {
   const time = state.seconds;
   messageElement.className = "board-message";
   messageElement.textContent = `Solved in ${formatTime(time)}. Nice work.`;
-  saveScore(state.difficulty, time);
+  saveScore(state.difficulty, state.mode, time);
   renderLeaderboard();
   updateBestTime();
 }
@@ -191,30 +224,37 @@ function loadScores() {
   try { return JSON.parse(localStorage.getItem(LEADERBOARD_KEY)) || {}; } catch { return {}; }
 }
 
-function saveScore(difficulty, time) {
+function saveScore(difficulty, mode, time) {
   const scores = loadScores();
-  scores[difficulty] = [...(scores[difficulty] || []), { name: state.playerName, time, current: true }].sort((a, b) => a.time - b.time).slice(0, 5);
+  const key = `${difficulty}:${mode}`;
+  scores[key] = [...(scores[key] || []), { name: state.playerName, time, current: true }].sort((a, b) => a.time - b.time).slice(0, 5);
   localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(scores));
 }
 
 function renderLeaderboard() {
-  const scores = loadScores()[state.leaderboardDifficulty] || [];
+  const scores = loadScores()[`${state.leaderboardDifficulty}:${state.leaderboardMode}`] || [];
   const markup = scores.length ? scores.map((score, index) => `<div class="leaderboard-row${score.current ? " current" : ""}"><span class="leaderboard-rank">${String(index + 1).padStart(2, "0")}</span><span class="leaderboard-name">${score.name}</span><span class="leaderboard-time">${formatTime(score.time)}</span></div>`).join("") : `<div class="leaderboard-empty">No wins recorded yet.</div>`;
   leaderboardElement.innerHTML = markup;
   startLeaderboardElement.innerHTML = markup;
-  document.querySelectorAll(".leaderboard-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.leaderboard === state.leaderboardDifficulty));
+  document.querySelectorAll(".leaderboard-difficulty-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.leaderboard === state.leaderboardDifficulty));
+  document.querySelectorAll(".leaderboard-mode-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.leaderboardMode === state.leaderboardMode));
 }
 
 function updateBestTime() {
   const scores = loadScores();
-  const allScores = Object.entries(scores).flatMap(([difficulty, entries]) => entries.map((entry) => ({ ...entry, difficulty })));
+  const allScores = Object.entries(scores).flatMap(([key, entries]) => {
+    const [difficulty, mode] = key.split(":");
+    return entries.map((entry) => ({ ...entry, difficulty, mode }));
+  });
   const best = allScores.filter((entry) => entry.name === state.playerName).sort((a, b) => a.time - b.time)[0];
   document.querySelector("#bestTime").textContent = best ? formatTime(best.time) : "--:--";
-  document.querySelector("#bestDifficulty").textContent = best ? best.difficulty : "Play a round";
+  document.querySelector("#bestDifficulty").textContent = best ? `${best.difficulty} / ${GAME_MODES[best.mode].label}` : "Play a round";
 }
 
-function newGame(difficulty = state.difficulty) {
+function newGame(difficulty = state.difficulty, mode = state.mode) {
   state.difficulty = difficulty;
+  state.mode = mode;
+  state.lives = GAME_MODES[mode].lives;
   state.solution = buildSolution();
   state.puzzle = makePuzzle(state.solution, difficulty);
   state.givens = new Set(state.puzzle.flatMap((row, rowIndex) => row.map((value, columnIndex) => value ? rowIndex * 9 + columnIndex : null).filter((index) => index !== null)));
@@ -227,9 +267,15 @@ function newGame(difficulty = state.difficulty) {
   timerElement.textContent = "00:00";
   messageElement.textContent = "";
   messageElement.className = "board-message";
+  updateLives();
   updateNumberPad();
   document.querySelectorAll(".difficulty-tab").forEach((tab) => {
     const active = tab.dataset.difficulty === difficulty;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", active);
+  });
+  document.querySelectorAll(".game-mode-tab").forEach((tab) => {
+    const active = tab.dataset.mode === mode;
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", active);
   });
@@ -248,7 +294,7 @@ function startGame() {
   startErrorElement.textContent = "";
   startMenuElement.classList.add("hidden");
   gameScreenElement.classList.remove("hidden");
-  newGame(state.startDifficulty);
+  newGame(state.startDifficulty, state.startMode);
 }
 
 function returnToMenu() {
@@ -267,13 +313,26 @@ document.querySelectorAll(".start-difficulty").forEach((button) => button.addEve
     item.setAttribute("aria-checked", selected);
   });
 }));
+document.querySelectorAll(".start-mode").forEach((button) => button.addEventListener("click", () => {
+  state.startMode = button.dataset.startMode;
+  document.querySelectorAll(".start-mode").forEach((item) => {
+    const selected = item === button;
+    item.classList.toggle("selected", selected);
+    item.setAttribute("aria-checked", selected);
+  });
+}));
 playerNameElement.addEventListener("input", () => { startErrorElement.textContent = ""; });
 document.querySelector("#startGame").addEventListener("click", startGame);
 document.querySelector("#backToMenu").addEventListener("click", returnToMenu);
 
 document.querySelectorAll(".difficulty-tab").forEach((tab) => tab.addEventListener("click", () => newGame(tab.dataset.difficulty)));
-document.querySelectorAll(".leaderboard-tab").forEach((tab) => tab.addEventListener("click", () => {
+document.querySelectorAll(".game-mode-tab").forEach((tab) => tab.addEventListener("click", () => newGame(state.difficulty, tab.dataset.mode)));
+document.querySelectorAll(".leaderboard-difficulty-tab").forEach((tab) => tab.addEventListener("click", () => {
   state.leaderboardDifficulty = tab.dataset.leaderboard;
+  renderLeaderboard();
+}));
+document.querySelectorAll(".leaderboard-mode-tab").forEach((tab) => tab.addEventListener("click", () => {
+  state.leaderboardMode = tab.dataset.leaderboardMode;
   renderLeaderboard();
 }));
 document.querySelectorAll(".number-button").forEach((button) => button.addEventListener("click", () => enterNumber(Number(button.dataset.number))));

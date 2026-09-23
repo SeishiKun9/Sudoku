@@ -38,6 +38,12 @@
           <button class="start-difficulty" data-start-difficulty="medium" role="radio" aria-checked="false"><strong>Medium</strong><span>34 clues</span><i>02</i></button>
           <button class="start-difficulty" data-start-difficulty="hard" role="radio" aria-checked="false"><strong>Hard</strong><span>27 clues</span><i>03</i></button>
         </div>
+        <p class="menu-label mode-label">Choose your game mode</p>
+        <div class="start-modes" role="radiogroup" aria-label="Choose game mode">
+          <button class="start-mode" data-start-mode="hardcore" role="radio" aria-checked="false"><strong>Hardcore</strong><span>1 life</span></button>
+          <button class="start-mode selected" data-start-mode="standard" role="radio" aria-checked="true"><strong>Standard</strong><span>3 lives</span></button>
+          <button class="start-mode" data-start-mode="baby" role="radio" aria-checked="false"><strong>Baby</strong><span>Infinite lives</span></button>
+        </div>
         <button class="start-button" id="startGame">Start game <span aria-hidden="true">→</span></button>
       </div>
       <div class="start-lower">
@@ -50,9 +56,14 @@
           <div class="section-heading"><span class="section-number">01</span><h2>Leaderboards</h2></div>
           <p>Fastest times, sorted by difficulty.</p>
           <div class="leaderboard-tabs start-leaderboard-tabs" role="tablist" aria-label="Start menu leaderboard difficulty">
-            <button class="leaderboard-tab active" data-leaderboard="easy">Easy</button>
-            <button class="leaderboard-tab" data-leaderboard="medium">Medium</button>
-            <button class="leaderboard-tab" data-leaderboard="hard">Hard</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab active" data-leaderboard="easy">Easy</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab" data-leaderboard="medium">Medium</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab" data-leaderboard="hard">Hard</button>
+          </div>
+          <div class="leaderboard-tabs leaderboard-mode-tabs" role="tablist" aria-label="Start menu leaderboard game mode">
+            <button class="leaderboard-tab leaderboard-mode-tab" data-leaderboard-mode="hardcore">Hardcore</button>
+            <button class="leaderboard-tab leaderboard-mode-tab active" data-leaderboard-mode="standard">Standard</button>
+            <button class="leaderboard-tab leaderboard-mode-tab" data-leaderboard-mode="baby">Baby</button>
           </div>
           <div class="leaderboard-list" id="startLeaderboardList"></div>
         </section>
@@ -62,14 +73,27 @@
     <section class="game-layout hidden" id="gameScreen" aria-label="Sudoku game">
       <div class="game-panel">
         <div class="game-toolbar">
-          <div class="difficulty-tabs" role="tablist" aria-label="Choose difficulty">
-            <button class="difficulty-tab active" data-difficulty="easy" role="tab" aria-selected="true">Easy<span>42 clues</span></button>
-            <button class="difficulty-tab" data-difficulty="medium" role="tab" aria-selected="false">Medium<span>34 clues</span></button>
-            <button class="difficulty-tab" data-difficulty="hard" role="tab" aria-selected="false">Hard<span>27 clues</span></button>
+          <div class="game-settings">
+            <div class="difficulty-tabs" role="tablist" aria-label="Choose difficulty">
+              <button class="difficulty-tab active" data-difficulty="easy" role="tab" aria-selected="true">Easy<span>42 clues</span></button>
+              <button class="difficulty-tab" data-difficulty="medium" role="tab" aria-selected="false">Medium<span>34 clues</span></button>
+              <button class="difficulty-tab" data-difficulty="hard" role="tab" aria-selected="false">Hard<span>27 clues</span></button>
+            </div>
+            <div class="game-modes" role="tablist" aria-label="Choose game mode">
+              <button class="game-mode-tab" data-mode="hardcore" role="tab" aria-selected="false">Hardcore</button>
+              <button class="game-mode-tab active" data-mode="standard" role="tab" aria-selected="true">Standard</button>
+              <button class="game-mode-tab" data-mode="baby" role="tab" aria-selected="false">Baby</button>
+            </div>
           </div>
-          <div class="timer-wrap" aria-live="polite">
-            <span class="timer-label">TIME</span>
-            <span class="timer" id="timer">00:00</span>
+          <div class="status-wrap">
+            <div class="timer-wrap" aria-live="polite">
+              <span class="timer-label">TIME</span>
+              <span class="timer" id="timer">00:00</span>
+            </div>
+            <div class="lives-wrap" aria-live="polite">
+              <span class="timer-label">LIVES</span>
+              <span class="lives" id="lives" aria-label="3 lives remaining">3</span>
+            </div>
           </div>
         </div>
 
@@ -108,9 +132,14 @@
         <section class="side-section leaderboard-section">
           <div class="section-heading"><span class="section-number">02</span><h2>Leaderboard</h2></div>
           <div class="leaderboard-tabs game-leaderboard-tabs" role="tablist" aria-label="Leaderboard difficulty">
-            <button class="leaderboard-tab active" data-leaderboard="easy">Easy</button>
-            <button class="leaderboard-tab" data-leaderboard="medium">Medium</button>
-            <button class="leaderboard-tab" data-leaderboard="hard">Hard</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab active" data-leaderboard="easy">Easy</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab" data-leaderboard="medium">Medium</button>
+            <button class="leaderboard-tab leaderboard-difficulty-tab" data-leaderboard="hard">Hard</button>
+          </div>
+          <div class="leaderboard-tabs leaderboard-mode-tabs" role="tablist" aria-label="Leaderboard game mode">
+            <button class="leaderboard-tab leaderboard-mode-tab" data-leaderboard-mode="hardcore">Hardcore</button>
+            <button class="leaderboard-tab leaderboard-mode-tab active" data-leaderboard-mode="standard">Standard</button>
+            <button class="leaderboard-tab leaderboard-mode-tab" data-leaderboard-mode="baby">Baby</button>
           </div>
           <div class="leaderboard-list" id="leaderboardList"></div>
           <p class="leaderboard-note">Your best times are saved on this device.</p>
