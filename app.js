@@ -39,6 +39,9 @@ const leaderboardElement = document.querySelector("#leaderboardList");
 const startLeaderboardElement = document.querySelector("#startLeaderboardList");
 const startMenuElement = document.querySelector("#startMenu");
 const gameScreenElement = document.querySelector("#gameScreen");
+const gameDialogElement = document.querySelector("#gameDialog");
+const gameDialogTitleElement = document.querySelector("#gameDialogTitle");
+const gameDialogMessageElement = document.querySelector("#gameDialogMessage");
 const playerNameElement = document.querySelector("#playerName");
 const startErrorElement = document.querySelector("#startError");
 
@@ -103,7 +106,21 @@ function loseLife() {
   clearInterval(state.timerId);
   messageElement.className = "board-message error";
   messageElement.textContent = "Out of lives. Start a new puzzle to try again.";
+  showGameDialog(false);
   return false;
+}
+
+function showGameDialog(won) {
+  gameDialogTitleElement.textContent = won ? "Puzzle solved." : "Out of lives.";
+  gameDialogMessageElement.textContent = won
+    ? `Solved in ${formatTime(state.seconds)}. Would you like to try another puzzle?`
+    : "Would you like to try another puzzle or return to the menu?";
+  gameDialogElement.classList.remove("hidden");
+  document.querySelector("#dialogRetry").focus();
+}
+
+function hideGameDialog() {
+  gameDialogElement.classList.add("hidden");
 }
 
 function renderBoard() {
@@ -231,6 +248,7 @@ function finishGame() {
   saveScore(state.difficulty, state.mode, time);
   renderLeaderboard();
   updateBestTime();
+  showGameDialog(true);
 }
 
 function loadScores() {
@@ -265,6 +283,7 @@ function updateBestTime() {
 }
 
 function newGame(difficulty = state.difficulty, mode = state.mode) {
+  hideGameDialog();
   state.difficulty = difficulty;
   state.mode = mode;
   state.lives = GAME_MODES[mode].lives;
@@ -329,6 +348,11 @@ document.querySelectorAll(".start-mode").forEach((button) => button.addEventList
 playerNameElement.addEventListener("input", () => { startErrorElement.textContent = ""; });
 document.querySelector("#startGame").addEventListener("click", startGame);
 document.querySelector("#backToMenu").addEventListener("click", returnToMenu);
+document.querySelector("#dialogRetry").addEventListener("click", () => newGame());
+document.querySelector("#dialogMenu").addEventListener("click", () => {
+  hideGameDialog();
+  returnToMenu();
+});
 
 document.querySelectorAll(".leaderboard-difficulty-tab").forEach((tab) => tab.addEventListener("click", () => {
   state.leaderboardDifficulty = tab.dataset.leaderboard;

@@ -145,6 +145,18 @@
       </aside>
     </section>
 
+    <div class="game-dialog hidden" id="gameDialog" role="dialog" aria-modal="true" aria-labelledby="gameDialogTitle" aria-describedby="gameDialogMessage">
+      <div class="game-dialog-panel">
+        <p class="eyebrow">Round complete</p>
+        <h2 id="gameDialogTitle">Nice work.</h2>
+        <p id="gameDialogMessage">Would you like to try another puzzle?</p>
+        <div class="game-dialog-actions">
+          <button class="text-button" id="dialogMenu"><span aria-hidden="true">←</span> Go to menu</button>
+          <button class="primary-button" id="dialogRetry">Try again <span aria-hidden="true">↻</span></button>
+        </div>
+      </div>
+    </div>
+
     <footer><span>SEIDUKO / 2026</span><a class="owner-button" href="https://personal-page-blush-nu.vercel.app/" target="_blank" rel="noopener noreferrer">Know about the owner <span aria-hidden="true">↗</span></a><span>Take your time. Then take less.</span></footer>
   </main>
   <script src="app.js"></script>
