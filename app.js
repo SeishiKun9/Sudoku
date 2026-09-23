@@ -161,6 +161,16 @@ function highlightCells() {
   });
 }
 
+function selectNextEditableCell(startIndex) {
+  for (let offset = 1; offset <= state.puzzle.length * state.puzzle.length; offset += 1) {
+    const index = (startIndex + offset) % 81;
+    if (!state.givens.has(index) && !state.locked.has(index) && !state.puzzle[Math.floor(index / 9)][index % 9]) {
+      selectCell(index);
+      return;
+    }
+  }
+}
+
 function enterNumber(number) {
   if (state.selected === null || state.completed || (number && state.completedNumbers.has(number))) return;
   const row = Math.floor(state.selected / 9);
@@ -188,6 +198,7 @@ function enterNumber(number) {
   messageElement.className = "board-message";
   highlightCells();
   updateNumberPad();
+  if (number && number === state.solution[row][column]) selectNextEditableCell(state.selected);
 }
 
 function checkPuzzle() {
