@@ -85,7 +85,7 @@ function renderBoard() {
     cell.dataset.index = index;
     cell.setAttribute("role", "gridcell");
     cell.setAttribute("aria-label", `Row ${rowIndex + 1}, column ${columnIndex + 1}${value ? `, ${value}` : ", empty"}`);
-    cell.textContent = value || "";
+    cell.textContent = state.locked.has(index) ? "✓" : value || "";
     if (state.givens.has(index)) cell.classList.add("given");
     if (state.locked.has(index)) cell.classList.add("correct");
     cell.addEventListener("click", () => selectCell(index));
@@ -118,7 +118,6 @@ function enterNumber(number) {
   state.entries[state.selected] = number || undefined;
   state.puzzle[row][column] = number;
   const cell = document.querySelector(`[data-index="${state.selected}"]`);
-  cell.textContent = number || "";
   cell.classList.remove("conflict", "correct");
   if (number && number === state.solution[row][column]) {
     state.locked.add(state.selected);
@@ -126,6 +125,7 @@ function enterNumber(number) {
   } else if (number) {
     cell.classList.add("conflict");
   }
+  cell.textContent = state.locked.has(state.selected) ? "✓" : number || "";
   cell.setAttribute("aria-label", `Row ${row + 1}, column ${column + 1}${number ? `, ${number}` : ", empty"}`);
   messageElement.textContent = "";
   messageElement.className = "board-message";
