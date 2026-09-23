@@ -121,7 +121,10 @@ kbd { align-items: center; border: 1px solid var(--line); color: var(--purple); 
 .leaderboard-row.current .leaderboard-name, .leaderboard-row.current .leaderboard-time { color: #f18bcb; font-weight: 600; }
 .leaderboard-empty { border-bottom: 1px solid var(--soft-line); color: var(--muted); font-size: 12px; padding: 18px 0; }
 .leaderboard-note { color: var(--muted); font-size: 10px; line-height: 1.5; margin: 16px 0 0; }
-footer { border-top: 1px solid var(--line); color: var(--muted); display: flex; font-family: var(--mono); font-size: 9px; justify-content: space-between; letter-spacing: .08em; margin-top: 75px; padding-top: 18px; text-transform: uppercase; }
+footer { align-items: center; border-top: 1px solid var(--line); color: var(--muted); display: flex; font-family: var(--mono); font-size: 9px; gap: 18px; justify-content: space-between; letter-spacing: .08em; margin-top: 75px; padding-top: 18px; text-transform: uppercase; }
+.owner-button { border: 1px solid var(--line); color: var(--purple); padding: 9px 11px; text-decoration: none; transition: background .15s, border-color .15s; }
+.owner-button:hover, .owner-button:focus-visible { background: var(--purple-light); border-color: var(--purple); outline: 0; }
+.owner-button span { font-size: 13px; margin-left: 6px; }
 @media (max-width: 800px) {
   .app-shell { padding: 0 max(18px, env(safe-area-inset-right)) max(26px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); }
   .topbar { height: 70px; }
@@ -168,5 +171,5 @@ footer { border-top: 1px solid var(--line); color: var(--muted); display: flex; 
   .game-actions .text-button { min-height: 44px; }
   .game-actions .primary-button { flex-basis: 100%; min-height: 48px; order: -1; }
   .board-message { min-height: 38px; }
-  footer { display: block; line-height: 2; }
+  footer { align-items: flex-start; display: flex; flex-direction: column; gap: 16px; line-height: 2; }
 }
