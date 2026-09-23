@@ -110,6 +110,14 @@ function updateNumberPad() {
   });
 }
 
+function isNumberComplete(number) {
+  let correctCount = 0;
+  state.puzzle.forEach((row, rowIndex) => row.forEach((value, columnIndex) => {
+    if (value === number && state.solution[rowIndex][columnIndex] === number) correctCount += 1;
+  }));
+  return correctCount === 9;
+}
+
 function highlightCells() {
   const selectedValue = state.selected === null ? 0 : state.puzzle[Math.floor(state.selected / 9)][state.selected % 9];
   document.querySelectorAll(".cell").forEach((cell, index) => {
@@ -124,7 +132,7 @@ function highlightCells() {
 }
 
 function enterNumber(number) {
-  if (state.selected === null || state.completed) return;
+  if (state.selected === null || state.completed || (number && state.completedNumbers.has(number))) return;
   const row = Math.floor(state.selected / 9);
   const column = state.selected % 9;
   if (state.givens.has(state.selected) || state.locked.has(state.selected)) return;
@@ -134,7 +142,7 @@ function enterNumber(number) {
   cell.classList.remove("conflict", "correct");
   if (number && number === state.solution[row][column]) {
     state.locked.add(state.selected);
-    state.completedNumbers.add(number);
+    if (isNumberComplete(number)) state.completedNumbers.add(number);
     cell.classList.add("correct");
   } else if (number) {
     cell.classList.add("conflict");
