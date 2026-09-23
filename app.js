@@ -32,6 +32,7 @@ const state = {
 const boardElement = document.querySelector("#board");
 const timerElement = document.querySelector("#timer");
 const livesElement = document.querySelector("#lives");
+const gameModeLabelElement = document.querySelector("#gameModeLabel");
 const messageElement = document.querySelector("#boardMessage");
 const leaderboardElement = document.querySelector("#leaderboardList");
 const startLeaderboardElement = document.querySelector("#startLeaderboardList");
@@ -274,11 +275,7 @@ function newGame(difficulty = state.difficulty, mode = state.mode) {
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", active);
   });
-  document.querySelectorAll(".game-mode-tab").forEach((tab) => {
-    const active = tab.dataset.mode === mode;
-    tab.classList.toggle("active", active);
-    tab.setAttribute("aria-selected", active);
-  });
+  gameModeLabelElement.textContent = GAME_MODES[mode].label;
   renderBoard();
   startTimer();
 }
@@ -326,7 +323,6 @@ document.querySelector("#startGame").addEventListener("click", startGame);
 document.querySelector("#backToMenu").addEventListener("click", returnToMenu);
 
 document.querySelectorAll(".difficulty-tab").forEach((tab) => tab.addEventListener("click", () => newGame(tab.dataset.difficulty)));
-document.querySelectorAll(".game-mode-tab").forEach((tab) => tab.addEventListener("click", () => newGame(state.difficulty, tab.dataset.mode)));
 document.querySelectorAll(".leaderboard-difficulty-tab").forEach((tab) => tab.addEventListener("click", () => {
   state.leaderboardDifficulty = tab.dataset.leaderboard;
   renderLeaderboard();

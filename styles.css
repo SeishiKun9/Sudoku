@@ -71,7 +71,9 @@ h1 em { color: var(--purple); font-style: normal; }
 .game-toolbar { align-items: start; display: flex; justify-content: space-between; margin-bottom: 22px; }
 .game-settings { display: grid; gap: 17px; }
 .difficulty-tabs { display: flex; gap: 28px; }
-.game-modes { display: flex; gap: 18px; }
+.game-mode-display { align-items: baseline; display: flex; gap: 10px; }
+.game-mode-label { color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .1em; }
+.game-mode-display strong { color: var(--purple); font-family: var(--mono); font-size: 9px; letter-spacing: .05em; text-transform: uppercase; }
 .difficulty-tab, .leaderboard-tab { background: none; border: 0; color: var(--muted); cursor: pointer; padding: 0; text-align: left; }
 .game-mode-tab { background: none; border: 0; color: var(--muted); cursor: pointer; font-family: var(--mono); font-size: 9px; letter-spacing: .05em; padding: 0; text-transform: uppercase; }
 .difficulty-tab { font-size: 14px; font-weight: 600; }
@@ -165,9 +167,10 @@ footer { align-items: center; border-top: 1px solid var(--line); color: var(--mu
   .score-stamp { margin: 0 0 38px 5px; }
   .start-leaderboard { border-left: 0; border-top: 1px solid var(--line); padding: 30px 0 0; }
   .game-toolbar { display: block; }
-  .difficulty-tabs, .game-modes { gap: 0; justify-content: space-between; width: 100%; }
+  .difficulty-tabs { gap: 0; justify-content: space-between; width: 100%; }
   .difficulty-tab { font-size: 12px; }
   .difficulty-tab span { font-size: 8px; }
+  .game-mode-display { justify-content: space-between; margin-top: 16px; }
   .status-wrap { border: 0; border-top: 1px solid var(--soft-line); grid-template-columns: repeat(2, 1fr); margin-top: 16px; padding-top: 12px; width: 100%; }
   .timer-wrap, .lives-wrap { padding: 0; text-align: left; }
   .lives-wrap { border-left: 0; text-align: right; }
