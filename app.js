@@ -85,7 +85,7 @@ function renderBoard() {
     cell.dataset.index = index;
     cell.setAttribute("role", "gridcell");
     cell.setAttribute("aria-label", `Row ${rowIndex + 1}, column ${columnIndex + 1}${value ? `, ${value}` : ", empty"}`);
-    cell.textContent = state.locked.has(index) ? "✓" : value || "";
+    cell.textContent = value || "";
     if (state.givens.has(index)) cell.classList.add("given");
     if (state.locked.has(index)) cell.classList.add("correct");
     cell.addEventListener("click", () => selectCell(index));
@@ -98,6 +98,18 @@ function selectCell(index) {
   if (state.completed) return;
   state.selected = index;
   highlightCells();
+  updateNumberPad();
+}
+
+function updateNumberPad() {
+  const lockedValue = state.selected !== null && state.locked.has(state.selected)
+    ? state.solution[Math.floor(state.selected / 9)][state.selected % 9]
+    : null;
+  document.querySelectorAll(".number-button").forEach((button) => {
+    const isCorrect = Number(button.dataset.number) === lockedValue;
+    button.textContent = isCorrect ? "✓" : button.dataset.number === "0" ? "x" : button.dataset.number;
+    button.classList.toggle("correct", isCorrect);
+  });
 }
 
 function highlightCells() {
@@ -125,11 +137,12 @@ function enterNumber(number) {
   } else if (number) {
     cell.classList.add("conflict");
   }
-  cell.textContent = state.locked.has(state.selected) ? "✓" : number || "";
+  cell.textContent = number || "";
   cell.setAttribute("aria-label", `Row ${row + 1}, column ${column + 1}${number ? `, ${number}` : ", empty"}`);
   messageElement.textContent = "";
   messageElement.className = "board-message";
   highlightCells();
+  updateNumberPad();
 }
 
 function checkPuzzle() {
@@ -203,6 +216,7 @@ function newGame(difficulty = state.difficulty) {
   timerElement.textContent = "00:00";
   messageElement.textContent = "";
   messageElement.className = "board-message";
+  updateNumberPad();
   document.querySelectorAll(".difficulty-tab").forEach((tab) => {
     const active = tab.dataset.difficulty === difficulty;
     tab.classList.toggle("active", active);

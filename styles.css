@@ -87,6 +87,7 @@ h1 em { color: var(--purple); font-style: normal; }
 .number-pad { display: grid; gap: 8px; grid-template-columns: repeat(10, 1fr); margin-top: 17px; max-width: 650px; }
 .number-button { aspect-ratio: 1; background: transparent; border: 1px solid var(--line); color: var(--purple); cursor: pointer; font-family: var(--mono); font-size: 15px; transition: background .15s, color .15s, border .15s; }
 .number-button:hover, .number-button.active { background: var(--purple); border-color: var(--purple); color: var(--black); }
+.number-button.correct { background: var(--purple); border-color: var(--purple); color: var(--black); font-weight: 700; }
 .number-button.erase { color: #f18bcb; font-family: var(--sans); font-size: 19px; }
 .number-button.erase:hover { background: #b64b8d; border-color: #b64b8d; color: white; }
 .game-actions { align-items: center; display: flex; justify-content: space-between; margin-top: 24px; max-width: 650px; }
