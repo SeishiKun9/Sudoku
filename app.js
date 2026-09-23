@@ -16,7 +16,8 @@ const state = {
   startDifficulty: "easy",
   playerName: "",
   givens: new Set(),
-  locked: new Set()
+  locked: new Set(),
+  completedNumbers: new Set()
 };
 
 const boardElement = document.querySelector("#board");
@@ -102,11 +103,8 @@ function selectCell(index) {
 }
 
 function updateNumberPad() {
-  const lockedValue = state.selected !== null && state.locked.has(state.selected)
-    ? state.solution[Math.floor(state.selected / 9)][state.selected % 9]
-    : null;
   document.querySelectorAll(".number-button").forEach((button) => {
-    const isCorrect = Number(button.dataset.number) === lockedValue;
+    const isCorrect = state.completedNumbers.has(Number(button.dataset.number));
     button.textContent = isCorrect ? "✓" : button.dataset.number === "0" ? "x" : button.dataset.number;
     button.classList.toggle("correct", isCorrect);
   });
@@ -133,6 +131,7 @@ function enterNumber(number) {
   cell.classList.remove("conflict", "correct");
   if (number && number === state.solution[row][column]) {
     state.locked.add(state.selected);
+    state.completedNumbers.add(number);
     cell.classList.add("correct");
   } else if (number) {
     cell.classList.add("conflict");
@@ -209,6 +208,7 @@ function newGame(difficulty = state.difficulty) {
   state.puzzle = makePuzzle(state.solution, difficulty);
   state.givens = new Set(state.puzzle.flatMap((row, rowIndex) => row.map((value, columnIndex) => value ? rowIndex * 9 + columnIndex : null).filter((index) => index !== null)));
   state.locked = new Set();
+  state.completedNumbers = new Set();
   state.entries = Array(81);
   state.selected = null;
   state.seconds = 0;
