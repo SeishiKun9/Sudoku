@@ -14,7 +14,9 @@ const state = {
   completed: false,
   leaderboardDifficulty: "easy",
   startDifficulty: "easy",
-  playerName: ""
+  playerName: "",
+  givens: new Set(),
+  locked: new Set()
 };
 
 const boardElement = document.querySelector("#board");
@@ -84,9 +86,8 @@ function renderBoard() {
     cell.setAttribute("role", "gridcell");
     cell.setAttribute("aria-label", `Row ${rowIndex + 1}, column ${columnIndex + 1}${value ? `, ${value}` : ", empty"}`);
     cell.textContent = value || "";
-    if (state.puzzle[rowIndex][columnIndex] && state.puzzle[rowIndex][columnIndex] === state.solution[rowIndex][columnIndex]) {
-      if (state.entries[index] === undefined) cell.classList.add("given");
-    }
+    if (state.givens.has(index)) cell.classList.add("given");
+    if (state.locked.has(index)) cell.classList.add("correct");
     cell.addEventListener("click", () => selectCell(index));
     boardElement.appendChild(cell);
   }));
@@ -113,12 +114,18 @@ function enterNumber(number) {
   if (state.selected === null || state.completed) return;
   const row = Math.floor(state.selected / 9);
   const column = state.selected % 9;
-  if (state.puzzle[row][column] && state.entries[state.selected] === undefined) return;
+  if (state.givens.has(state.selected) || state.locked.has(state.selected)) return;
   state.entries[state.selected] = number || undefined;
   state.puzzle[row][column] = number;
   const cell = document.querySelector(`[data-index="${state.selected}"]`);
   cell.textContent = number || "";
-  cell.classList.remove("given", "conflict");
+  cell.classList.remove("conflict", "correct");
+  if (number && number === state.solution[row][column]) {
+    state.locked.add(state.selected);
+    cell.classList.add("correct");
+  } else if (number) {
+    cell.classList.add("conflict");
+  }
   cell.setAttribute("aria-label", `Row ${row + 1}, column ${column + 1}${number ? `, ${number}` : ", empty"}`);
   messageElement.textContent = "";
   messageElement.className = "board-message";
@@ -187,6 +194,8 @@ function newGame(difficulty = state.difficulty) {
   state.difficulty = difficulty;
   state.solution = buildSolution();
   state.puzzle = makePuzzle(state.solution, difficulty);
+  state.givens = new Set(state.puzzle.flatMap((row, rowIndex) => row.map((value, columnIndex) => value ? rowIndex * 9 + columnIndex : null).filter((index) => index !== null)));
+  state.locked = new Set();
   state.entries = Array(81);
   state.selected = null;
   state.seconds = 0;

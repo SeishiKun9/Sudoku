@@ -81,6 +81,7 @@ h1 em { color: var(--purple); font-style: normal; }
 .cell.selected, .cell.related { background: #251b31; }
 .cell.selected { background: #352344; box-shadow: inset 0 0 0 2px var(--purple); color: var(--purple); }
 .cell.conflict { background: #3d1d38; color: #f18bcb; }
+.cell.correct { background: #2d1f43; color: var(--purple); cursor: default; }
 .board-message { color: var(--purple); font-size: 13px; font-weight: 600; min-height: 20px; padding-top: 12px; }
 .board-message.error { color: #f18bcb; }
 .number-pad { display: grid; gap: 8px; grid-template-columns: repeat(10, 1fr); margin-top: 17px; max-width: 650px; }
