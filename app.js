@@ -111,12 +111,15 @@ function updateNumberPad() {
 }
 
 function highlightCells() {
+  const selectedValue = state.selected === null ? 0 : state.puzzle[Math.floor(state.selected / 9)][state.selected % 9];
   document.querySelectorAll(".cell").forEach((cell, index) => {
     const sameRow = state.selected !== null && Math.floor(index / 9) === Math.floor(state.selected / 9);
     const sameColumn = state.selected !== null && index % 9 === state.selected % 9;
     const sameBox = state.selected !== null && Math.floor(Math.floor(index / 9) / 3) === Math.floor(Math.floor(state.selected / 9) / 3) && Math.floor((index % 9) / 3) === Math.floor((state.selected % 9) / 3);
+    const sameNumber = selectedValue !== 0 && state.puzzle[Math.floor(index / 9)][index % 9] === selectedValue;
     cell.classList.toggle("selected", index === state.selected);
     cell.classList.toggle("related", index !== state.selected && (sameRow || sameColumn || sameBox));
+    cell.classList.toggle("same-number", index !== state.selected && sameNumber);
   });
 }
 
